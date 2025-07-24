@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Expérience d'Espion Amateur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #0f172a;
+            background: #ffffff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page de sélection */
+        .selection-page {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .selection-page h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .selection-page p {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 3rem;
+        }
+
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .interest-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .interest-card:hover {
+            border-color: #3c3e41;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .interest-card.selected {
+            border-color: #1e293b;
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .interest-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .interest-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .continue-btn {
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: background 0.2s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .continue-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-btn:hover {
+            background: #3c3e41;
+        }
+
+        /* Page d'article */
+        .article-page {
+            display: none;
+            min-height: 200vh;
+        }
+
+        .article-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .article-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .scroll-instruction {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #92400e;
+        }
+
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .article-content h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Modal/Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            margin: 1rem;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .popup-content p {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 0 0.5rem;
+            transition: background 0.2s ease;
+        }
+
+        .popup-btn:hover {
+            background: #059669;
+        }
+
+        .popup-btn.secondary {
+            background: #6b7280;
+        }
+
+        .popup-btn.secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .selection-page h1 {
+                font-size: 2rem;
+            }
+
+            .interests-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page de sélection des intérêts -->
+    <div id="selectionPage" class="selection-page">
+        <div class="container">
+            <h1>Quel est votre domaine d'intérêt ?</h1>
+            <p>Choisissez ce qui vous passionne le plus pour personnaliser votre expérience</p>
+
+            <div class="interests-grid">
+                <div class="interest-card" data-interest="sport">
+                    <div class="interest-icon">⚽</div>
+                    <div class="interest-title">Sport</div>
+                </div>
+                <div class="interest-card" data-interest="cinema">
+                    <div class="interest-icon">🎬</div>
+                    <div class="interest-title">Cinéma</div>
+                </div>
+                <div class="interest-card" data-interest="art">
+                    <div class="interest-icon">🎨</div>
+                    <div class="interest-title">Art</div>
+                </div>
+                <div class="interest-card" data-interest="musique">
+                    <div class="interest-icon">🎵</div>
+                    <div class="interest-title">Musique</div>
+                </div>
+                <div class="interest-card" data-interest="voyage">
+                    <div class="interest-icon">✈️</div>
+                    <div class="interest-title">Voyage</div>
+                </div>
+                <div class="interest-card" data-interest="technologie">
+                    <div class="interest-icon">💻</div>
+                    <div class="interest-title">Technologie</div>
+                </div>
+            </div>
+
+            <button id="continueBtn" class="continue-btn">Continuer la lecture</button>
+        </div>
+    </div>
+
+    <!-- Page d'article -->
+    <div id="articlePage" class="article-page">
+        <div class="container">
+            <div class="article-header">
+                <h1>L'Impact des Microplastiques sur les Océans</h1>
+                <div class="article-meta">Publié le 15 juillet 2024 • 8 min de lecture</div>
+            </div>
+
+            <div class="scroll-instruction">
+                💡 <strong>Pour cette démonstration :</strong> Scrollez rapidement à travers cet article comme si vous
+                vous ennuyiez !
+            </div>
+
+            <div class="article-content">
+                <p>Les océans de notre planète font face à une crise silencieuse mais dévastatrice : l'invasion des
+                    microplastiques. Ces particules invisibles à l'œil nu transforment progressivement nos écosystèmes
+                    marins en véritables décharges microscopiques.</p>
+
+                <h2>Qu'est-ce que les microplastiques ?</h2>
+                <p>Les microplastiques sont des fragments de plastique d'une taille inférieure à 5 millimètres. Ils
+                    proviennent de la dégradation de déchets plastiques plus importants, mais aussi directement de
+                    produits de consommation comme les cosmétiques, les textiles synthétiques ou encore les pneus de
+                    voiture.</p>
+
+                <p>Ces particules sont si petites qu'elles traversent facilement les systèmes de filtration des stations
+                    d'épuration et se retrouvent directement déversées dans les cours d'eau, puis dans les océans. Une
+                    fois dans l'environnement marin, elles persistent pendant des centaines d'années.</p>
+
+                <h2>L'ampleur du problème</h2>
+                <p>Selon les dernières études scientifiques, chaque litre d'eau de mer contiendrait en moyenne 5 à 50
+                    particules de microplastiques. Dans certaines zones particulièrement polluées, comme la
+                    Méditerranée, ce chiffre peut atteindre plusieurs centaines de particules par litre.</p>
+
+                <p>Les courants marins transportent ces pollutants sur des milliers de kilomètres, créant de véritables
+                    "soupes de plastique" dans certaines régions océaniques. Le fameux "continent de plastique" du
+                    Pacifique Nord n'est que la partie visible de l'iceberg.</p>
+
+                <h2>Impact sur la biodiversité marine</h2>
+                <p>Les conséquences sur la faune marine sont dramatiques. Les microplastiques sont ingérés par le
+                    zooplancton, base de la chaîne alimentaire océanique. Cette contamination se transmet ensuite à tous
+                    les niveaux trophiques : poissons, mollusques, crustacés, mammifères marins.</p>
+
+                <p>Les études montrent que ces particules s'accumulent dans les organes des animaux marins, perturbant
+                    leur système digestif, leur reproduction et leur comportement. Certaines espèces de poissons
+                    présentent déjà des taux de microplastiques alarmants dans leurs tissus.</p>
+
+                <h2>Les solutions émergentes</h2>
+                <p>Face à cette urgence, plusieurs pistes sont explorées. La recherche se concentre sur le développement
+                    de plastiques biodégradables, l'amélioration des systèmes de filtration, et la mise au point de
+                    technologies capable de capturer les microplastiques dans l'océan.</p>
+
+                <p>Des initiatives citoyennes voient également le jour, encourageant la réduction de la consommation de
+                    plastique à usage unique et le développement d'alternatives durables. Cependant, l'ampleur du défi
+                    nécessite une action coordonnée à l'échelle mondiale.</p>
+
+                <p>La préservation de nos océans dépend de notre capacité collective à repenser notre rapport au
+                    plastique et à mettre en œuvre des solutions innovantes avant qu'il ne soit trop tard.</p>
+
+                <p>L'avenir de la biodiversité marine - et par extension de notre propre survie - se joue maintenant.
+                    Chaque geste compte, chaque décision politique compte, chaque innovation compte dans cette course
+                    contre la montre pour sauver nos océans de l'invasion du plastique.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-content fade-in">
+            <h3>🎯 Contenu personnalisé détecté !</h3>
+            <p>Nous avons remarqué que vous scrollez rapidement. Voici un article qui pourrait mieux vous intéresser,
+                basé sur vos préférences :</p>
+            <div id="popupRecommendation"></div>
+            <button class="popup-btn" onclick="acceptRecommendation()">Lire cet article</button>
+            <button class="popup-btn secondary" onclick="closePopup()">Continuer la lecture</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedInterest = null;
+        let scrollSpeed = 0;
+        let lastScrollTime = Date.now();
+        let lastScrollTop = 0;
+        let fastScrollCount = 0;
+        let popupShown = false;
+
+        // Contenu des recommandations par intérêt
+        const recommendations = {
+            sport: {
+                title: "🏆 Les Secrets d'Entraînement des Athlètes Olympiques",
+                description: "Découvrez les méthodes révolutionnaires utilisées par les champions olympiques pour dépasser leurs limites."
+            },
+            cinema: {
+                title: "🎬 Les Films les Plus Attendus de 2024",
+                description: "Une sélection exclusive des blockbusters et films d'auteur qui vont marquer cette année."
+            },
+            art: {
+                title: "🎨 L'Art Numérique Révolutionne les Galeries",
+                description: "Comment les NFT et la réalité virtuelle transforment l'expérience artistique contemporaine."
+            },
+            musique: {
+                title: "🎵 Les Nouveaux Talents qui Bouleversent la Scène Musicale",
+                description: "Rencontre avec les artistes émergents qui redéfinissent les codes de la musique actuelle."
+            },
+            voyage: {
+                title: "✈️ 10 Destinations Secrètes à Découvrir Absolument",
+                description: "Des lieux magiques encore préservés du tourisme de masse, pour des voyages authentiques."
+            },
+            technologie: {
+                title: "💻 L'IA va-t-elle Remplacer les Développeurs ?",
+                description: "Analyse approfondie de l'impact de l'intelligence artificielle sur les métiers du numérique."
+            }
+        };
+
+        // Gestion de la sélection d'intérêt
+        document.querySelectorAll('.interest-card').forEach(card => {
+            card.addEventListener('click', function () {
+                // Retirer la sélection précédente
+                document.querySelectorAll('.interest-card').forEach(c => c.classList.remove('selected'));
+
+                // Ajouter la sélection actuelle
+                this.classList.add('selected');
+                selectedInterest = this.dataset.interest;
+
+                // Afficher le bouton continuer
+                document.getElementById('continueBtn').classList.add('visible');
+            });
+        });
+
+        // Gestion du bouton continuer
+        document.getElementById('continueBtn').addEventListener('click', function () {
+            if (selectedInterest) {
+                document.getElementById('selectionPage').style.display = 'none';
+                document.getElementById('articlePage').style.display = 'block';
+
+                // Initialiser le tracking du scroll
+                initScrollTracking();
+            }
+        });
+
+        // Initialisation du tracking du scroll
+        function initScrollTracking() {
+            window.addEventListener('scroll', function () {
+                if (popupShown) return;
+
+                const currentTime = Date.now();
+                const currentScrollTop = window.pageYOffset;
+                const timeDiff = currentTime - lastScrollTime;
+                const scrollDiff = Math.abs(currentScrollTop - lastScrollTop);
+
+                if (timeDiff > 0) {
+                    scrollSpeed = scrollDiff / timeDiff;
+
+                    // Si l'utilisateur scroll rapidement (vitesse > 2 pixels par ms)
+                    if (scrollSpeed > 2) {
+                        fastScrollCount++;
+
+                        // Après 3 scrolls rapides consécutifs, montrer la popup
+                        if (fastScrollCount >= 3) {
+                            showRecommendationPopup();
+                            popupShown = true;
+                        }
+                    } else {
+                        // Reset le compteur si le scroll ralentit
+                        fastScrollCount = Math.max(0, fastScrollCount - 1);
+                    }
+                }
+
+                lastScrollTime = currentTime;
+                lastScrollTop = currentScrollTop;
+            });
+        }
+
+        // Affichage de la popup de recommandation
+        function showRecommendationPopup() {
+            const recommendation = recommendations[selectedInterest];
+            const popupRecommendation = document.getElementById('popupRecommendation');
+
+            popupRecommendation.innerHTML = `
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: #1e293b;">${recommendation.title}</h4>
+                    <p style="margin: 0; color: #64748b; font-size: 0.9rem;">${recommendation.description}</p>
+                </div>
+            `;
+
+            document.getElementById('popupOverlay').style.display = 'flex';
+        }
+
+        // Accepter la recommandation
+        function acceptRecommendation() {
+            alert(`🎉 Redirection vers l'article recommandé !\n\nDémonstration terminée. \n\nVous venez de vivre exactement ce qui se passe sur les plateformes comme TikTok, YouTube, ou Facebook : votre comportement (scroll rapide = ennui) a été détecté et analysé pour vous proposer un contenu "personnalisé" basé sur vos intérêts déclarés.\n\nC'est ainsi que fonctionne le capitalisme de surveillance : chaque geste devient une donnée exploitable !`);
+            closePopup();
+        }
+
+        // Fermer la popup
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
+        // Fermer la popup en cliquant sur l'overlay
+        document.getElementById('popupOverlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+
+</html>
